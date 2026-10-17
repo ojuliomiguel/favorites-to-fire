@@ -1,0 +1,21 @@
+{
+  "name": "favorites-to-fire",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "wrangler types && tsc",
+    "test": "node --no-warnings --experimental-strip-types --test test/*.test.ts"
+  },
+  "dependencies": {
+    "hono": "~4.13.13"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "wrangler": "^4.151.1"
+  }
+}
