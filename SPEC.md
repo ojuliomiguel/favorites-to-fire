@@ -27,6 +27,7 @@ Captura ────┘    (IA gera Proposta)                ▲                
 | Entrada | Fila / Descartado | aprovação do Lote, conforme o veredito (com ou sem Inversão) | 0 |
 | Descartado | Fila | Resgatar | 0 |
 | Fila | Fila (no fim) | Pular | 0 |
+| Fila | Descartado | "Descartar" na pergunta que aparece no 3º Pular | 0 |
 | Fila | Em andamento | "Abrir": leva ao app de origem (YouTube, X, Safari) | 0 |
 | Em andamento | Desfecho | o dono fecha o item ao voltar | ver §6 |
 
@@ -64,6 +65,7 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 **Consumo**
 - O dono escolhe o Escopo (opcional) e o **Tempo disponível** (≤5 min, ≤20 min ou longo). O app mostra **um Favorito por vez**: o mais antigo da Fila que se encaixa.
 - Ações: **Abrir** (vai para Em andamento e abre o app de origem) ou **Pular** (vai para o fim da Fila). A lista completa da Fila existe, mas não é a tela principal.
+- No **3º Pular** do mesmo Favorito, ele volta perguntando "Ainda quer? Manter · Descartar". Descartar manda para Descartado, e Manter zera a contagem de Pulos.
 - Ao abrir o app, os Favoritos **Em andamento** aparecem **no topo**, pedindo o Desfecho: "Como foi *[título]*? Aprendi · Consumi · Lixo".
 - **Aprendi** exige a Lição (uma linha, não vazia).
 
@@ -74,13 +76,15 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 | Desfecho **Consumi** | 5 |
 | Desfecho **Lixo** | 5 (igual a Consumi, para não haver incentivo a mentir) |
 | Desfecho **Aprendi** + Lição | 15 |
-| Zerar um Escopo | +50, só quando é **um Desfecho** que esvazia a Fila e a Entrada daquele Escopo. Esvaziar por descarte na Triagem não conta |
+| Zerar um Escopo | +50, só quando é **um Desfecho** que esvazia a Fila e a Entrada daquele Escopo, e **uma vez por Escopo**. Esvaziar por descarte na Triagem não conta |
 
-- **Sequência:** dias seguidos com ≥1 Desfecho, contados no fuso America/Sao_Paulo. Multiplica o XP por ×1,1 a cada semana completa seguida, com teto de ×2. Quebra se passar um dia sem Desfecho.
+- **Sequência:** dias seguidos com ≥1 Desfecho, contados no fuso America/Sao_Paulo. Um dia sem Desfecho zera a contagem de dias.
+- **Multiplicador da Sequência:** 1 + 0,1 × semanas acumuladas (de 0 a 10), ou seja, de ×1 a ×2. Cada semana completa de Sequência soma 1, e cada dia sem Desfecho tira 1. Uma gripe de um dia custa ×0,1, não o multiplicador inteiro.
 - **Nível:** passar do Nível N para o N+1 custa 100·N XP.
 - **Conquistas** (iniciais): Primeiro aprendizado · 50 aprendizados · Zerou o escopo *X* · 30 dias de Sequência · Detector de ruído (25 Lixos).
 - **Fonte da verdade:** cada ação é gravada como um **evento** (Triagem, Inversão, Resgate, Pular, Abrir, Desfecho), com data e hora. XP, Nível, Sequência, Conquistas e estatísticas são **sempre recalculados a partir dos eventos**, nunca guardados como um placar acumulado. Os valores da tabela ficam numa constante, e alterá-los recalcula todo o histórico.
-- **Estatísticas:** Backlog restante com burndown e projeção ("no seu ritmo, zera em N semanas"), horas economizadas (a soma do tempo estimado dos Descartados), % de Ruído por Fonte e por Escopo, Taxa de acerto da IA e lista de Lições.
+- **Horas economizadas** (a soma do tempo estimado dos Descartados) aparecem na tela inicial, ao lado do XP. O XP conta o que foi consumido, e as horas contam o que foi largado sem abrir.
+- **Estatísticas:** Backlog restante com burndown e projeção ("no seu ritmo, zera em N semanas"), horas economizadas, % de Ruído por Fonte e por Escopo, Taxa de acerto da IA e lista de Lições.
 
 ## 7. Infra e stack
 
@@ -103,7 +107,7 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 - [ ] Revisar Lote: por Escopo, até 20, descartes primeiro, Inverter, Aprovar
 - [ ] Consumo: filtros de Escopo e Tempo disponível → um Favorito por vez → Abrir ou Pular
 - [ ] Em andamento no topo → Desfecho (Aprendi exige Lição)
-- [ ] Eventos gravados + XP total visível
+- [ ] Eventos gravados + XP total e horas economizadas visíveis na tela inicial
 
 ### Incremento 2: X + Captura
 - [ ] Importar o JSON de Bookmarks do X
@@ -118,6 +122,7 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 - [ ] Nível, Sequência com multiplicador, Conquistas, bônus por zerar um Escopo
 - [ ] Tela de estatísticas
 - [ ] Tela de Descartados com Resgatar
+- [ ] Pergunta "Ainda quer?" no 3º Pular
 - [ ] Taxa de acerto da IA
 
 ## 9. Em aberto (não bloqueia o Incremento 1)
@@ -138,6 +143,11 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 | XP só por Desfecho | XP por Triagem | aprovar é fácil de "farmar", e o consumo é o esforço real |
 | Lixo vale o mesmo que Consumi | Lixo valer menos | admitir que era ruído não pode custar pontos |
 | XP derivado de eventos | placar acumulado | ajustar a tabela recalcula o histórico sem migração |
+| Horas economizadas ao lado do XP | XP por descarte na Triagem | descartar não pode valer zero, mas também não pode virar XP fácil de farmar |
+| Bônus de Zerar Escopo uma vez por Escopo | bônus a cada vez que o Escopo esvazia | senão, capturar um link para um Escopo vazio e mandar para o Lixo rende 55 XP |
+| Sequência linear | multiplicador composto (×1,1ⁿ) | a diferença máxima é de 0,25 (na 7ª semana), e o linear é mais fácil de prever e de testar |
+| Um dia sem Desfecho tira 0,1 do multiplicador | voltar a ×1 | perder dez semanas por causa de uma gripe leva a consumir só para manter a Sequência |
+| No 3º Pular, perguntar "Ainda quer?" | deixar o Favorito na Fila para sempre | o dono admite que pula o "longo" à noite; três Pulos já são um veredito |
 | Abrir no app de origem | player embutido | a experiência no iPhone é melhor, e não é preciso detectar o fim do vídeo |
 | SSR com Hono + JSX | React SPA | o app cresce uma rota por vez, sem duplicar API e cliente |
 | Cloudflare Access | auth própria | é o lugar onde mais se erra em app pessoal, e o Access resolve sem código |

@@ -57,7 +57,7 @@ Trocar o veredito da Proposta de um Favorito dentro de um Lote antes de aprová-
 _Avoid_: corrigir, rejeitar
 
 **Descartado**:
-Um Favorito que saiu do Backlog na Triagem, sem ser aberto. Nunca é apagado.
+Um Favorito que saiu do Backlog sem ser aberto: na Triagem ou ao responder "Descartar" no 3º Pular. Nunca é apagado.
 _Avoid_: lixo, deletado, removido
 
 **Resgatar**:
@@ -75,7 +75,7 @@ O filtro de quanto tempo o dono tem agora: até 5 min, até 20 min ou longo. Ele
 _Avoid_: duração, janela
 
 **Pular**:
-Mandar o Favorito mostrado para o fim da Fila sem consumi-lo.
+Mandar o Favorito mostrado para o fim da Fila sem consumi-lo. No 3º Pular, o Favorito volta perguntando se ainda vale mantê-lo.
 _Avoid_: adiar, snooze
 
 **Em andamento**:

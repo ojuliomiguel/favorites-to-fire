@@ -2,6 +2,8 @@
 _bmad/config.user.toml
 # Skills copy for other tools (Claude Code only)
 .agents/
+# BMad: party mode chat memory
+_bmad-output/party-mode/
 # Claude Code: personal settings
 .claude/settings.local.json
 # Cloudflare / Node
