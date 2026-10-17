@@ -1,0 +1,11 @@
+# BMad: personal installer answers
+_bmad/config.user.toml
+# Skills copy for other tools (Claude Code only)
+.agents/
+# Claude Code: personal settings
+.claude/settings.local.json
+# Cloudflare / Node
+node_modules/
+.wrangler/
+.dev.vars
+.env
