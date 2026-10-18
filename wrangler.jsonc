@@ -1,22 +1,21 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "favorites-to-fire",
-  "main": "src/index.ts",
-  "compatibility_date": "2026-10-12",
-  "workers_dev": true,
-  "preview_urls": false,
-  "vars": {
-    // Empty = the Worker answers 500 for every request (fail closed).
-    // Fill both after enabling Access on the workers.dev route.
-    "ACCESS_TEAM_DOMAIN": "", // https://<team>.cloudflareaccess.com (no trailing slash)
-    "ACCESS_AUD": ""
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "favorites-to-fire",
-      // Placeholder until `wrangler d1 create favorites-to-fire` is run.
-      "database_id": "00000000-0000-0000-0000-000000000000"
-    }
-  ]
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "favorites-to-fire",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-10-12",
+	"workers_dev": true,
+	"preview_urls": false,
+	// Set with `wrangler secret put <NAME>` (prod) or in .dev.vars (local), never here.
+	// Missing = the Worker answers 500 for every request (fail closed).
+	// ACCESS_TEAM_DOMAIN: https://<team>.cloudflareaccess.com (no trailing slash)
+	"secrets": {
+		"required": ["ACCESS_TEAM_DOMAIN", "ACCESS_AUD"]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "favorites-to-fire",
+			"database_id": "ab97bda7-c018-4a51-92f7-605e475482c3"
+		}
+	]
 }

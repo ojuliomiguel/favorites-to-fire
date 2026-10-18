@@ -7,7 +7,7 @@ import app from '../src/index.ts'
 
 const MIGRATION = readFileSync(new URL('../migrations/0001_init.sql', import.meta.url), 'utf8')
 const TEAM = 'https://team.cloudflareaccess.com'
-const DOWN = 'https://down.cloudflareaccess.com' // certs endpoint answers 503
+const DOWN = 'https://down.cloudflareaccess.com'
 const AUD = 'aud-tag'
 
 function freshDb() {
@@ -15,8 +15,6 @@ function freshDb() {
   db.exec(MIGRATION)
   return db
 }
-
-// --- Access middleware ------------------------------------------------------
 
 async function keyPair(kid: string, hash = 'SHA-256', alg = 'RS256') {
   const { publicKey, privateKey } = await crypto.subtle.generateKey(
@@ -32,9 +30,9 @@ async function keyPair(kid: string, hash = 'SHA-256', alg = 'RS256') {
 }
 
 const good = await keyPair('k1')
-const impostor = await keyPair('k1') // same kid, different key
-const stranger = await keyPair('k2') // kid not in the JWKS
-const rs512 = await keyPair('k3', 'SHA-512', 'RS512') // in the JWKS, but not RS256
+const impostor = await keyPair('k1')
+const stranger = await keyPair('k2')
+const rs512 = await keyPair('k3', 'SHA-512', 'RS512')
 
 let fetchCalls = 0
 globalThis.fetch = async (input) => {
@@ -105,7 +103,6 @@ const invalid: Record<string, () => Promise<string>> = {
   expired: () => jwt(good, { exp: now() - 10 }),
   'no exp': () => jwt(good, { exp: undefined }),
   'algorithm other than RS256': () => jwt(rs512),
-  // kid of a JWKS key, so it reaches the algorithm check instead of JwtHeaderRequiresKid.
   'HS256 token': () => sign(claims(), { kty: 'oct', k: 'c2VjcmV0', alg: 'HS256', kid: 'k1' }),
   garbage: async () => 'not.a.jwt',
 }
@@ -118,15 +115,15 @@ for (const [name, make] of Object.entries(invalid)) {
 }
 
 for (const empty of ['ACCESS_TEAM_DOMAIN', 'ACCESS_AUD']) {
-  test(`empty ${empty}: 500, fails closed even with a valid JWT`, async () => {
-    const res = await hit(await jwt(good), { [empty]: '' })
-    assert.equal(res.status, 500)
-    assert.equal(fetchCalls, 0)
-    assert.equal(dbCalls, 0)
-  })
+  for (const value of ['', undefined]) {
+    test(`${empty} = ${JSON.stringify(value)}: 500, fails closed even with a valid JWT`, async () => {
+      const res = await hit(await jwt(good), { [empty]: value })
+      assert.equal(res.status, 500)
+      assert.equal(fetchCalls, 0)
+      assert.equal(dbCalls, 0)
+    })
+  }
 }
-
-// --- events integrity (0001_init.sql) ---------------------------------------
 
 function schema() {
   const db = freshDb()
