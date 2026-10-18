@@ -99,8 +99,9 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 ## 8. Incrementos
 
 ### Incremento 1: o ciclo completo com o Edge
-- [ ] Worker + D1 publicados, com o Access protegendo todas as rotas e a validação de JWT no Worker
+- [x] Worker + D1 publicados, com o Access protegendo todas as rotas e a validação de JWT no Worker
 - [ ] Importar o HTML do Edge, com dedup por URL canônica (reimportar o mesmo arquivo não cria nada novo)
+  - Hoje o banco aceita `favorites.url` em branco. A canonização rejeita, ou entra um CHECK (reconstruir `favorites` é barato enquanto ela está vazia).
 - [ ] Buscar o texto das páginas do Edge (truncado), com fallback para metadados
 - [ ] Descoberta de escopos → tela de aprovação da lista (renomear, juntar, apagar)
 - [ ] Propostas para a Entrada
@@ -108,6 +109,7 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 - [ ] Consumo: filtros de Escopo e Tempo disponível → um Favorito por vez → Abrir ou Pular
 - [ ] Em andamento no topo → Desfecho (Aprendi exige Lição)
 - [ ] Eventos gravados + XP total e horas economizadas visíveis na tela inicial
+  - Hoje `UPDATE` e `DELETE` em `events` passam por cima do trigger do Desfecho. Um trigger append-only entra por migração nova, sem reconstruir a tabela.
 
 ### Incremento 2: X + Captura
 - [ ] Importar o JSON de Bookmarks do X
@@ -131,6 +133,8 @@ Firefox, Safari e Chrome ficam de fora (o conteúdo deles repete o do Edge).
 - Se o Google Takeout traz o "Assistir mais tarde". Se não trouxer, usamos o script de console.
 - Se a API da DeepSeek já serve o snapshot `V4.1-Flash-1017`. A tarifa de pico (01–04h e 06–10h UTC, em dias úteis) é o dobro, então a classificação do Backlog pode rodar fora desses horários.
 - Qual script de export do X usar, e o formato exato do JSON dele.
+- O Worker busca o JWKS do Access a cada requisição, sem cache nem timeout. Cache entra se o tráfego crescer.
+- `ACCESS_TEAM_DOMAIN` com barra no final ou sem `https://` dá 403 em tudo. Normalizar só se o setup se repetir.
 
 ## 10. Decisões e porquês
 
